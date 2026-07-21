@@ -5,8 +5,9 @@
   now fired; the 0.9.0 review flagged that no tracking issue exists — filing one on
   react-tosijs is still pending). Graduate them to a shared framework-free package
   (e.g. `tosijs-extras`),
-  with both bridges re-exporting so the move is non-breaking; include `dev.ts` (this is
-  the ecosystem's second near-verbatim copy of the build pipeline). Until then, fix
+  with both bridges re-exporting so the move is non-breaking. (`dev.ts` is NOT in scope —
+  per the maintainer it's the primitive that evolved into the tosijs-ui build system;
+  the convergence path for the bridges is adopting that, not sharing dev.ts.) Until then, fix
   bugs in both repos — and consider a mechanical drift-check (diff the logic-bearing
   lines against the react-tosijs copies in a test or prepublish step).
 - [x] ~~Run the nine-lens review before publishing~~ — inverted for 0.9.0 (published
