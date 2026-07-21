@@ -15,8 +15,10 @@ Workarounds in this repo for gaps in upstream projects (file, don't fix).
 
 - **Extras duplication** — `paths.ts` / `persist.ts` / `devtools.ts` are duplicated
   from react-tosijs, which recorded "a second consumer" as the trigger for graduating
-  them to a shared framework-free package. That trigger has now fired — see TODO.md.
-  Until the shared package exists, bug fixes must land in both repos.
+  them to a shared framework-free package. That trigger has now fired.
+  Issue: https://github.com/tonioloewald/react-tosijs/issues/3
+  Until the shared package exists, bug fixes must land in both repos (first known
+  divergence: 0.9.1's persist SecurityError guard is not yet in react-tosijs).
 
 ## @angular/core
 
