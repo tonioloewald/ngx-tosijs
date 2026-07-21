@@ -8,12 +8,12 @@ export interface TosiSignalOptions<T> {
     manualCleanup?: boolean;
 }
 /**
- * A writable signal bound to a tosijs path. Templates, computed(), and
- * effect() track it like any signal; set/update write through to the
- * shared state, and mutations from ANYWHERE — other components, other
- * frameworks, vanilla JS, the console — propagate back in. isSignal()
- * returns false for it (it wraps an internal signal), but tracking works
- * because reading it reads the internal signal.
+ * A writable signal bound to a tosijs path. It IS an Angular signal
+ * (isSignal() is true; templates, computed(), and effect() track it
+ * natively) whose set/update write through to the shared state — update
+ * computes from live state, so same-tick writes compose correctly — and
+ * mutations from ANYWHERE — other components, other frameworks, vanilla
+ * JS, the console — propagate back in on the tosijs flush.
  */
 export interface TosiSignal<T> extends Signal<T> {
     set(value: T): void;

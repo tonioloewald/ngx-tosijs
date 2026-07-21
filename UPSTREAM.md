@@ -20,8 +20,22 @@ Workarounds in this repo for gaps in upstream projects (file, don't fix).
 
 ## @angular/core
 
-- **No public seam for branding custom signal wrappers** — `TosiSignal` wraps an
-  internal `signal()`; `isSignal()` returns false for it because the `SIGNAL` symbol
-  isn't exported as public API. Tracking works regardless (reads delegate to the inner
-  signal). Not filed: verify against current Angular internals/docs before asking —
-  there may be a supported pattern (tracked in TODO.md).
+- **Signal branding — RESOLVED, nothing to file.** As of 0.9.1 `tosiSignal` returns a
+  real `signal()` with `set`/`update` patched to write through to tosijs (the observer
+  keeps the pre-patch local setter), so `isSignal()` is true using only public API.
+
+## bun
+
+- **Selective barrel re-export bundler bug** — `export { a, b } from "./mod"` in
+  `src/index.ts` made `Bun.build` (1.3.14) emit an undeclared renamed symbol
+  (`_resolvePathOf2 is not declared`); `export *` avoids it. Not yet filed on
+  oven-sh/bun: reproduce minimally and search existing reports before filing (the
+  constraint is recorded in CLAUDE.md; react-tosijs's mock.module entry notes bun's
+  other gotcha).
+
+## tosijs-ui
+
+- **`tjs-lang` workaround retired** — tosijs-ui 1.7.0 (installed here) fixed the
+  build-time `tjs-lang/browser` resolution failure (tosijs-ui#20); the `tjs-lang`
+  devDependency was dropped in 0.9.1 and the demo builds clean without it.
+  react-tosijs (on 1.6.23) still carries its copy.

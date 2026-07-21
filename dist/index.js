@@ -30,12 +30,16 @@ var tosiSignal = (observed, options = {}) => {
     console.error(BAD_ARGUMENT, observed);
     throw new Error(BAD_ARGUMENT);
   }
-  const read = () => xin[path] !== undefined ? xin[path] : options.initialValue;
+  const read = () => {
+    const value = xin[path];
+    return value !== undefined ? value : options.initialValue;
+  };
   const inner = signal(read(), {
     equal: (a, b) => typeof b === "object" && b !== null || typeof b === "function" ? false : Object.is(a, b)
   });
+  const applyLocal = inner.set.bind(inner);
   const listener = observe(path, () => {
-    inner.set(read());
+    applyLocal(read());
   });
   const destroy = () => {
     unobserve(listener);
@@ -44,14 +48,13 @@ var tosiSignal = (observed, options = {}) => {
     const destroyRef = options.injector ? options.injector.get(DestroyRef) : inject(DestroyRef);
     destroyRef.onDestroy(destroy);
   }
-  const out = () => inner();
+  const out = inner;
   out.set = (value) => {
     xin[path] = value;
   };
   out.update = (updater) => {
-    out.set(updater(inner()));
+    out.set(updater(read()));
   };
-  out.asReadonly = () => inner.asReadonly();
   out.destroy = destroy;
   return out;
 };
@@ -152,7 +155,7 @@ var connectDevTools = ({
   };
 };
 // src/version.ts
-var version = "0.9.0";
+var version = "0.9.1";
 export {
   version,
   valueOf,
@@ -166,5 +169,5 @@ export {
   _resolvePathOf
 };
 
-//# debugId=A81C468F47C37A2A64756E2164756E21
+//# debugId=0D240147A020F3AD64756E2164756E21
 //# sourceMappingURL=index.js.map

@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test";
-import { runInInjectionContext, Injector, NgZone } from "@angular/core";
+import { runInInjectionContext, Injector, NgZone, isSignal } from "@angular/core";
 import { xinProxy, updates, touch } from "tosijs";
 import {
   tosiSignal,
@@ -100,6 +100,53 @@ describe("tosiSignal", () => {
     ngstate.count = seen + 50;
     await updates();
     expect(count()).toBe(seen);
+  });
+
+  // regression tests for the 0.9.0 stale-update() bug: NO intervening
+  // `await updates()` — writes in the same tick must compose
+
+  test("two synchronous update() calls both apply", async () => {
+    ngstate.count = 0;
+    await updates();
+    const count = tosiSignal<number>("ngstate.count", { manualCleanup: true });
+    count.update((c) => c + 1);
+    count.update((c) => c + 1);
+    expect(Number(ngstate.count)).toBe(2);
+    await updates();
+    expect(count()).toBe(2);
+    count.destroy();
+  });
+
+  test("set() then update() in the same tick compose", async () => {
+    ngstate.count = 0;
+    await updates();
+    const count = tosiSignal<number>("ngstate.count", { manualCleanup: true });
+    count.set(5);
+    count.update((c) => c + 1);
+    expect(Number(ngstate.count)).toBe(6);
+    await updates();
+    expect(count()).toBe(6);
+    count.destroy();
+  });
+
+  test("external mutation then update() in the same tick compose", async () => {
+    ngstate.count = 0;
+    await updates();
+    const count = tosiSignal<number>("ngstate.count", { manualCleanup: true });
+    ngstate.count = 100;
+    count.update((c) => c + 1);
+    expect(Number(ngstate.count)).toBe(101);
+    await updates();
+    expect(count()).toBe(101);
+    count.destroy();
+  });
+
+  test("a TosiSignal is a real Angular signal (isSignal)", () => {
+    const greeting = tosiSignal<string>("ngstate.greeting", {
+      manualCleanup: true,
+    });
+    expect(isSignal(greeting)).toBe(true);
+    greeting.destroy();
   });
 
   test("asReadonly returns a readable signal without setters", () => {

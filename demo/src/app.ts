@@ -59,6 +59,7 @@ export class AppComponent {
 
   remove(item: Reminder) {
     const todos = app.todos;
+    // cast is the proxy-identity typing gap — retire when tosijs#17 closes
     todos.splice(todos.indexOf(item as any), 1);
   }
 }

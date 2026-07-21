@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.9.1 (2026-07-21)
+
+### Fixed
+
+- **`tosiSignal.update()` no longer loses same-tick writes** (0.9.0 blocker, caught by
+  the post-publish review): it computed from the wrapped signal, which only refreshes
+  on the async tosijs flush — so `count.update(c => c+1); count.update(c => c+1)` in
+  one tick yielded 1, and an update after a same-tick `set()` or external mutation
+  clobbered it. `update` now computes from live state. **0.9.0 is deprecated on npm** —
+  upgrade.
+- Regression tests for same-tick write composition (no `await updates()` between
+  writes — the pattern that masked the bug).
+
+### Changed
+
+- **A `TosiSignal` is now a real Angular signal** — `tosiSignal` returns an actual
+  `signal()` with `set`/`update` redirected to write through to tosijs, so
+  `isSignal()` is true (0.9.0 returned a wrapper for which it was false).
+- Dropped the `tjs-lang` devDependency (tosijs-ui 1.7.0 fixed the bundling issue —
+  tosijs-ui#20); demo bundle rebuilt, mascot z-ordering fixed to match
+  react.tosijs.net.
+- `CHANGELOG.md` now ships in the npm package.
+
 ## 0.9.0 (2026-07-21)
 
 Initial release.

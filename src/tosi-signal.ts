@@ -16,12 +16,12 @@ export interface TosiSignalOptions<T> {
 }
 
 /**
- * A writable signal bound to a tosijs path. Templates, computed(), and
- * effect() track it like any signal; set/update write through to the
- * shared state, and mutations from ANYWHERE — other components, other
- * frameworks, vanilla JS, the console — propagate back in. isSignal()
- * returns false for it (it wraps an internal signal), but tracking works
- * because reading it reads the internal signal.
+ * A writable signal bound to a tosijs path. It IS an Angular signal
+ * (isSignal() is true; templates, computed(), and effect() track it
+ * natively) whose set/update write through to the shared state — update
+ * computes from live state, so same-tick writes compose correctly — and
+ * mutations from ANYWHERE — other components, other frameworks, vanilla
+ * JS, the console — propagate back in on the tosijs flush.
  */
 export interface TosiSignal<T> extends Signal<T> {
   set(value: T): void;
@@ -40,8 +40,10 @@ export const tosiSignal = <T = any>(
     console.error(BAD_ARGUMENT, observed);
     throw new Error(BAD_ARGUMENT);
   }
-  const read = (): T =>
-    xin[path] !== undefined ? xin[path] : (options.initialValue as T);
+  const read = (): T => {
+    const value = xin[path];
+    return value !== undefined ? value : (options.initialValue as T);
+  };
 
   // objects and functions always propagate on touch — in-place mutation
   // preserves identity, so equality can't distinguish touch-worthy
@@ -53,8 +55,13 @@ export const tosiSignal = <T = any>(
         : Object.is(a, b),
   });
 
+  // capture the local setter BEFORE patching: the observer refreshes the
+  // signal from tosijs with it, while the public set/update write through
+  // to xin (the signal then updates on the flush)
+  const applyLocal = inner.set.bind(inner);
+
   const listener = observe(path, () => {
-    inner.set(read());
+    applyLocal(read());
   });
   const destroy = (): void => {
     unobserve(listener);
@@ -66,14 +73,18 @@ export const tosiSignal = <T = any>(
     destroyRef.onDestroy(destroy);
   }
 
-  const out = (() => inner()) as TosiSignal<T>;
+  // the returned value IS the Angular signal (SIGNAL-branded, so
+  // isSignal() is true and tracking is native) with writes redirected
+  const out = inner as unknown as TosiSignal<T>;
   out.set = (value: T) => {
     xin[path] = value;
   };
+  // update reads LIVE state (xin), not the signal — the signal only
+  // refreshes on the async flush, and reading it here would silently
+  // lose any same-tick writes
   out.update = (updater) => {
-    out.set(updater(inner()));
+    out.set(updater(read()));
   };
-  out.asReadonly = () => inner.asReadonly();
   out.destroy = destroy;
   return out;
 };

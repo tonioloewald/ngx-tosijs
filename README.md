@@ -121,12 +121,12 @@ releases, bump the `key`.
 
 ## Compatibility
 
-- **Angular** `>=16 <23` (signals + `DestroyRef` arrived in 16; the demo runs
-  Angular 22, zoneless, JIT-compiled without the CLI).
+- **Angular** `>=16 <23` — the floor is API-based (signals + `DestroyRef` arrived
+  in 16); the suite exercises Angular 22 (zoneless, JIT-compiled without the CLI).
 - **tosijs** `^1.0.6` — the library uses `tosiPath`/`tosiValue` when available
   (tosijs ≥ 1.1) and falls back to `xinPath`/`xinValue` on older versions.
-- `isSignal()` returns `false` for a `TosiSignal` (it wraps an internal signal);
-  template/`computed()`/`effect()` tracking works normally.
+- A `TosiSignal` **is** a real Angular signal (`isSignal()` is true) with its
+  `set`/`update` redirected to write through to tosijs.
 - **SSR**: tosijs needs DOM globals to load, so server rendering means a DOM-shimmed
   pipeline (see [tosijs#18](https://github.com/tonioloewald/tosijs/issues/18)).
 
