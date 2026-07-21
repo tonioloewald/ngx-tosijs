@@ -1,0 +1,62 @@
+{
+  "name": "ngx-tosijs",
+  "version": "0.9.0",
+  "description": "Insanely simple state management for Angular — and an off-ramp from Angular. Take your pick. tosijs state as Angular signals, no zones, no RxJS plumbing, and state reachable from outside the Angular tree",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.js",
+    "default": "./dist/index.js"
+  },
+  "files": [
+    "/dist",
+    "/LICENSE",
+    "/README.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "start": "bun dev.ts",
+    "build": "bun dev.ts --build",
+    "test": "bun test",
+    "typecheck": "bun tsc --noEmit -p tsconfig.typecheck.json",
+    "prepublishOnly": "bun test && bun run typecheck && bun run build"
+  },
+  "keywords": [
+    "angular",
+    "state-management",
+    "signals",
+    "zoneless",
+    "javascript",
+    "typescript"
+  ],
+  "author": "Tonio Loewald",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tonioloewald/ngx-tosijs.git"
+  },
+  "devDependencies": {
+    "@angular/compiler": "^22.0.7",
+    "@angular/core": "^22.0.7",
+    "@angular/platform-browser": "^22.0.7",
+    "@happy-dom/global-registrator": "^20.0.0",
+    "@types/node": "^22.19.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "bun-types": "latest",
+    "chokidar": "^4.0.3",
+    "happy-dom": "^20.0.0",
+    "ngx-tosijs": "file:.",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-tosijs": "^1.2.0",
+    "rxjs": "^7.8.1",
+    "tjs-lang": "^0.11.0",
+    "tosijs": "^1.6.10",
+    "tosijs-ui": "^1.6.23",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "@angular/core": ">=16.0.0 <23.0.0",
+    "tosijs": "^1.0.6"
+  }
+}
