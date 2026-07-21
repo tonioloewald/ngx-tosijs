@@ -78,6 +78,9 @@ export const tosiSignal = <T = any>(
   const out = inner as unknown as TosiSignal<T>;
   out.set = (value: T) => {
     xin[path] = value;
+    // sync the local signal immediately so a read after set() sees the
+    // new value (other observers of the path still update on the flush)
+    applyLocal(read());
   };
   // update reads LIVE state (xin), not the signal — the signal only
   // refreshes on the async flush, and reading it here would silently

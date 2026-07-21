@@ -51,6 +51,7 @@ var tosiSignal = (observed, options = {}) => {
   const out = inner;
   out.set = (value) => {
     xin[path] = value;
+    applyLocal(read());
   };
   out.update = (updater) => {
     out.set(updater(read()));
@@ -93,9 +94,16 @@ var persist = (observed, options = {}) => {
   if (typeof path !== "string") {
     throw new Error("persist must be passed a path or a tosijs proxy");
   }
-  const storage = options.storage ?? globalThis.localStorage;
+  let storage = options.storage;
   if (storage === undefined) {
-    throw new Error(`persist: no storage available for ${path} — pass options.storage in non-browser environments`);
+    try {
+      storage = globalThis.localStorage;
+    } catch (error) {
+      storage = undefined;
+    }
+  }
+  if (storage === undefined) {
+    throw new Error(`persist: no storage available for ${path} — pass options.storage in non-browser or sandboxed environments`);
   }
   const key = options.key ?? `tosijs:${path}`;
   const stored = storage.getItem(key);
@@ -169,5 +177,5 @@ export {
   _resolvePathOf
 };
 
-//# debugId=0D240147A020F3AD64756E2164756E21
+//# debugId=3FF30908E5DDE9D364756E2164756E21
 //# sourceMappingURL=index.js.map

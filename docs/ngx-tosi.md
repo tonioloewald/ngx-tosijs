@@ -77,4 +77,9 @@ Framework-free, exactly as in [react-tosijs](https://react.tosijs.net):
 coalesced writes), and `connectDevTools()` (Redux DevTools tap). See the
 [README](https://github.com/tonioloewald/ngx-tosijs#readme).
 
+> A note on weight: this demo page ships ~3MB of JavaScript because it bundles the
+> Angular JIT compiler (no build tooling — the point is proving Angular works without
+> the CLI) *plus* an entire second framework (React) for the shared-state demo. The
+> `ngx-tosijs` library itself is ~5KB.
+
 `ngx-tosijs` is copyright ©2026 Tonio Loewald

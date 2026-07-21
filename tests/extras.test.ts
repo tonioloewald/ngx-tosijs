@@ -153,3 +153,20 @@ describe("connectDevTools", () => {
     expect(sent.length).toBe(count);
   });
 });
+
+describe("persist storage access", () => {
+  test("a throwing localStorage getter yields the actionable error", () => {
+    const saved = Object.getOwnPropertyDescriptor(globalThis, "localStorage");
+    try {
+      Object.defineProperty(globalThis, "localStorage", {
+        get() {
+          throw new Error("SecurityError: denied");
+        },
+        configurable: true,
+      });
+      expect(() => persist("persisted.count")).toThrow("pass options.storage");
+    } finally {
+      if (saved) Object.defineProperty(globalThis, "localStorage", saved);
+    }
+  });
+});

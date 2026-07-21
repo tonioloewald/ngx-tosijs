@@ -141,6 +141,13 @@ describe("tosiSignal", () => {
     count.destroy();
   });
 
+  test("a read immediately after set() sees the new value", () => {
+    const count = tosiSignal<number>("ngstate.count", { manualCleanup: true });
+    count.set(42);
+    expect(count()).toBe(42); // no flush needed for local consistency
+    count.destroy();
+  });
+
   test("a TosiSignal is a real Angular signal (isSignal)", () => {
     const greeting = tosiSignal<string>("ngstate.greeting", {
       manualCleanup: true,

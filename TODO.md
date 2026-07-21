@@ -2,8 +2,9 @@
 
 - [ ] **Extras duplication** — `paths.ts`, `persist.ts`, `devtools.ts` are copied from
   react-tosijs (the "second consumer" trigger react-tosijs's UPSTREAM.md recorded has
-  now fired; the 0.9.0 review flagged that no tracking issue existed — now filed, see
-  UPSTREAM.md). Graduate them to a shared framework-free package (e.g. `tosijs-extras`),
+  now fired; the 0.9.0 review flagged that no tracking issue exists — filing one on
+  react-tosijs is still pending). Graduate them to a shared framework-free package
+  (e.g. `tosijs-extras`),
   with both bridges re-exporting so the move is non-breaking; include `dev.ts` (this is
   the ecosystem's second near-verbatim copy of the build pipeline). Until then, fix
   bugs in both repos — and consider a mechanical drift-check (diff the logic-bearing
@@ -14,13 +15,10 @@
 
 ## Unverified leads from the 0.9.0 review (sanity-check before acting)
 
-- [ ] Read-after-write gap: a `sig()` read immediately after `sig.set(v)` returns the
-  pre-flush value (signal refreshes on the async flush). Document the semantics or
-  refresh locally on set.
+- [x] ~~Read-after-write gap~~ — **done in 0.9.1** (`set()` syncs the local signal).
 - [ ] Possible observer leak pattern when tosiSignal is created outside any injection
   context repeatedly with `manualCleanup` forgotten — audit/document.
-- [ ] persist: `localStorage` access can throw `SecurityError` in some embedding
-  contexts before the no-storage check — wrap the initial access.
+- [x] ~~persist SecurityError on localStorage access~~ — **done in 0.9.1**.
 - [ ] Typed-path parsing edge cases (keys containing dots/brackets) — audit
   `TosiPathValue` splitting.
 - [ ] persist: optional `debounce?: number` (with pagehide flush) for hot-path state;

@@ -37,10 +37,19 @@ export const persist = (
   if (typeof path !== "string") {
     throw new Error("persist must be passed a path or a tosijs proxy");
   }
-  const storage = options.storage ?? (globalThis as any).localStorage;
+  let storage = options.storage;
+  if (storage === undefined) {
+    try {
+      // merely touching localStorage throws SecurityError in some
+      // embedding contexts (sandboxed iframes, blocked third-party)
+      storage = (globalThis as any).localStorage;
+    } catch (error) {
+      storage = undefined;
+    }
+  }
   if (storage === undefined) {
     throw new Error(
-      `persist: no storage available for ${path} — pass options.storage in non-browser environments`,
+      `persist: no storage available for ${path} — pass options.storage in non-browser or sandboxed environments`,
     );
   }
   const key = options.key ?? `tosijs:${path}`;

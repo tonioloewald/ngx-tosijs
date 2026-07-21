@@ -12,6 +12,11 @@
   upgrade.
 - Regression tests for same-tick write composition (no `await updates()` between
   writes — the pattern that masked the bug).
+- A read immediately after `set()` now sees the new value (previously it returned the
+  pre-flush value until the tosijs flush landed).
+- `persist` handles embedding contexts where merely touching `localStorage` throws
+  (sandboxed iframes) — you get the actionable pass-options.storage error instead of a
+  SecurityError.
 
 ### Changed
 
