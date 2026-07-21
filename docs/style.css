@@ -237,7 +237,8 @@ app-root {
   flex-wrap: wrap;
   justify-content: center;
   align-items: flex-start;
-  z-index: 1;
+  /* no z-index: the mascot (z-index 1) lands in front of the apps,
+     matching react.tosijs.net; parallax sits at -1 regardless */
 }
 
 .framework-tag {
