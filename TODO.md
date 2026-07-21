@@ -2,17 +2,17 @@
 
 - [ ] **Extras duplication** — `paths.ts`, `persist.ts`, `devtools.ts` are copied from
   react-tosijs (the "second consumer" trigger react-tosijs's UPSTREAM.md recorded has
-  now fired; the 0.9.0 review flagged that no tracking issue exists — filing one on
-  react-tosijs is still pending). Graduate them to a shared framework-free package
+  now fired — tracked as react-tosijs#3). Graduate them to a shared framework-free package
   (e.g. `tosijs-extras`),
   with both bridges re-exporting so the move is non-breaking. (`dev.ts` is NOT in scope —
   per the maintainer it's the primitive that evolved into the tosijs-ui build system;
   the convergence path for the bridges is adopting that, not sharing dev.ts.) Until then, fix
   bugs in both repos — and consider a mechanical drift-check (diff the logic-bearing
   lines against the react-tosijs copies in a test or prepublish step).
-- [x] ~~Run the nine-lens review before publishing~~ — inverted for 0.9.0 (published
-  first); the review ran post-publish, found a blocker (stale `update()`), fixed in
-  0.9.1. Lesson filed to practices (gate sits before the tag push).
+- [x] ~~Run the nine-lens review before publishing~~ — 0.9.0 was a deliberate
+  name-stake release (publish-first, per maintainer); the review ran same-day, found a
+  blocker (stale `update()`), fixed in 0.9.1 with 0.9.0 deprecated. Carve-out
+  codification proposed in tosijs-coding-practices#3.
 
 ## Unverified leads from the 0.9.0 review (sanity-check before acting)
 
