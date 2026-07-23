@@ -1,4 +1,10 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  ElementRef,
+  ViewChild,
+} from "@angular/core";
 import { tosiSignal } from "ngx-tosijs";
 import { app, Reminder } from "./state";
 
@@ -39,11 +45,25 @@ import { app, Reminder } from "./state";
         </div>
         <div id="react-island"></div>
       </div>
-      <tosi-md class="doc" src="/ngx-tosi.md"></tosi-md>
+      <tosi-md #doc class="doc"></tosi-md>
     </div>
   `,
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit {
+  @ViewChild("doc") doc!: ElementRef<any>;
+
+  // tosi-md's src path races its initial render against the fetch and
+  // never re-renders when the fetch wins — load the markdown ourselves
+  // and render explicitly (see UPSTREAM.md: tosi-md src race)
+  async ngAfterViewInit() {
+    const text = await fetch("/ngx-tosi.md").then((response) => response.text());
+    const element = this.doc?.nativeElement;
+    if (element) {
+      element.value = text;
+      element.render();
+    }
+  }
+
   name = tosiSignal<string>("app.name");
   reminder = tosiSignal<string>("app.newItem.reminder");
   nextId = tosiSignal<number>("app.newItem.id");

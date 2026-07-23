@@ -37,6 +37,12 @@ Workarounds in this repo for gaps in upstream projects (file, don't fix).
 
 ## tosijs-ui
 
+- **`tosi-md` src-path render race** — the initial render races the src fetch; if the
+  fetch loses, the component stays blank forever (assigning `.value` doesn't trigger
+  re-render). Workaround in the demo: fetch explicitly, set `.value`, call `.render()`
+  (`demo/src/app.ts` ngAfterViewInit). Remove when fixed upstream.
+  Issue: https://github.com/tonioloewald/tosijs-ui/issues/23
+
 - **`tjs-lang` workaround retired** — tosijs-ui 1.7.0 (installed here) fixed the
   build-time `tjs-lang/browser` resolution failure (tosijs-ui#20); the `tjs-lang`
   devDependency was dropped in 0.9.1 and the demo builds clean without it.
